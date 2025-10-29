@@ -6,7 +6,8 @@ import { ImageUpload } from "@/components/ImageUpload";
 import { FilterSelector } from "@/components/FilterSelector";
 import { GeminiRoast } from "@/components/GeminiRoast";
 import { GifPreview } from "@/components/GifPreview";
-import { InstagramStoryMaker } from "@/components/InstagramStoryMaker";
+import { StoryMaker } from "@/components/StoryMaker";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useImageProcessor } from "@/hooks/useImageProcessor";
 import { useGifGenerator } from "@/hooks/useGifGenerator";
 import { toast } from "sonner";
@@ -136,109 +137,122 @@ const Index = () => {
 
         {/* Main Content */}
         <div className="grid gap-8">
-          {/* Story Maker Section */}
-          <InstagramStoryMaker />
-          {/* Upload Section */}
-          {!uploadedImage && (
-            <Card className="p-8 border-2 border-primary/20 hover:border-primary/40 transition-all spooky-hover">
-              <ImageUpload onImageUpload={handleImageUpload} />
-            </Card>
-          )}
+          <Tabs defaultValue="gif" className="w-full">
+            <div className="flex justify-center">
+              <TabsList>
+                <TabsTrigger value="gif">GIF Generator</TabsTrigger>
+                <TabsTrigger value="story">Story Maker</TabsTrigger>
+              </TabsList>
+            </div>
 
-          {/* Processing Section */}
-          {uploadedImage && !generatedGif && (
-            <div className="grid md:grid-cols-2 gap-8 animate-fade-in">
-              {/* Left: Preview */}
-              <Card className="p-6 border-2 border-primary/20">
-                <h2 className="text-2xl font-creepy text-primary mb-4 flex items-center gap-2">
-                  <Wand2 className="w-6 h-6" />
-                  Preview
-                </h2>
-                <div className="relative aspect-square rounded-lg overflow-hidden bg-muted">
-                  <img
-                    src={uploadedImage}
-                    alt="Costume preview"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </Card>
+            <TabsContent value="story">
+              <StoryMaker />
+            </TabsContent>
 
-              {/* Right: Controls */}
-              <div className="space-y-6">
-                <Card className="p-6 border-2 border-primary/20">
-                  <FilterSelector
-                    selectedFilter={selectedFilter}
-                    onFilterSelect={handleFilterSelect}
-                  />
+            <TabsContent value="gif">
+              {/* Upload Section */}
+              {!uploadedImage && (
+                <Card className="p-8 border-2 border-primary/20 hover:border-primary/40 transition-all spooky-hover">
+                  <ImageUpload onImageUpload={handleImageUpload} />
                 </Card>
+              )}
 
-                <GeminiRoast
-                  imageData={uploadedImage}
-                  selectedFilter={selectedFilter}
-                />
+              {/* Processing Section */}
+              {uploadedImage && !generatedGif && (
+                <div className="grid md:grid-cols-2 gap-8 animate-fade-in">
+                  {/* Left: Preview */}
+                  <Card className="p-6 border-2 border-primary/20">
+                    <h2 className="text-2xl font-creepy text-primary mb-4 flex items-center gap-2">
+                      <Wand2 className="w-6 h-6" />
+                      Preview
+                    </h2>
+                    <div className="relative aspect-square rounded-lg overflow-hidden bg-muted">
+                      <img
+                        src={uploadedImage}
+                        alt="Costume preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </Card>
 
-                <Button
-                  onClick={handleGenerateGif}
-                  disabled={!uploadedImage || isGenerating}
-                  className="w-full h-14 text-lg font-bold bg-gradient-to-r from-primary to-secondary hover:opacity-90 spooky-hover"
-                  size="lg"
-                >
-                  {isGenerating ? (
-                    <>Summoning spirits... 👻</>
-                  ) : (
-                    <>
-                      <Wand2 className="w-5 h-5 mr-2" />
-                      Generate Flex GIF
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
-          )}
+                  {/* Right: Controls */}
+                  <div className="space-y-6">
+                    <Card className="p-6 border-2 border-primary/20">
+                      <FilterSelector
+                        selectedFilter={selectedFilter}
+                        onFilterSelect={handleFilterSelect}
+                      />
+                    </Card>
 
-          {/* Results Section */}
-          {generatedGif && (
-            <div className="animate-fade-in">
-              <Card className="p-8 border-2 border-primary/20">
-                <h2 className="text-3xl font-creepy text-primary mb-6 text-center text-glow">
-                  Your Spooky Creation! 🎃
-                </h2>
-                
-                <GifPreview gifUrl={generatedGif} />
+                    <GeminiRoast
+                      imageData={uploadedImage}
+                      selectedFilter={selectedFilter}
+                    />
 
-                <div className="flex flex-wrap gap-4 justify-center mt-6">
-                  <Button
-                    onClick={handleDownload}
-                    className="spooky-hover"
-                    variant="default"
-                    size="lg"
-                  >
-                    <Download className="w-5 h-5 mr-2" />
-                    Download Video
-                  </Button>
-                  
-                  <Button
-                    onClick={handleShare}
-                    className="spooky-hover"
-                    variant="secondary"
-                    size="lg"
-                  >
-                    <Share2 className="w-5 h-5 mr-2" />
-                    Share Link
-                  </Button>
-                  
-                  <Button
-                    onClick={handleReset}
-                    className="spooky-hover"
-                    variant="outline"
-                    size="lg"
-                  >
-                    Try Another Photo 👻
-                  </Button>
+                    <Button
+                      onClick={handleGenerateGif}
+                      disabled={!uploadedImage || isGenerating}
+                      className="w-full h-14 text-lg font-bold bg-gradient-to-r from-primary to-secondary hover:opacity-90 spooky-hover"
+                      size="lg"
+                    >
+                      {isGenerating ? (
+                        <>Summoning spirits... 👻</>
+                      ) : (
+                        <>
+                          <Wand2 className="w-5 h-5 mr-2" />
+                          Generate Flex GIF
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </div>
-              </Card>
-            </div>
-          )}
+              )}
+
+              {/* Results Section */}
+              {generatedGif && (
+                <div className="animate-fade-in">
+                  <Card className="p-8 border-2 border-primary/20">
+                    <h2 className="text-3xl font-creepy text-primary mb-6 text-center text-glow">
+                      Your Spooky Creation! 🎃
+                    </h2>
+                    
+                    <GifPreview gifUrl={generatedGif} />
+
+                    <div className="flex flex-wrap gap-4 justify-center mt-6">
+                      <Button
+                        onClick={handleDownload}
+                        className="spooky-hover"
+                        variant="default"
+                        size="lg"
+                      >
+                        <Download className="w-5 h-5 mr-2" />
+                        Download Video
+                      </Button>
+                      
+                      <Button
+                        onClick={handleShare}
+                        className="spooky-hover"
+                        variant="secondary"
+                        size="lg"
+                      >
+                        <Share2 className="w-5 h-5 mr-2" />
+                        Share Link
+                      </Button>
+                      
+                      <Button
+                        onClick={handleReset}
+                        className="spooky-hover"
+                        variant="outline"
+                        size="lg"
+                      >
+                        Try Another Photo 👻
+                      </Button>
+                    </div>
+                  </Card>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Footer */}
