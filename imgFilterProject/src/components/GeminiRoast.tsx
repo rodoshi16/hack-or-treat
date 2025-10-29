@@ -15,6 +15,8 @@ export const GeminiRoast = ({ imageData, selectedFilter }: GeminiRoastProps) => 
   const [roast, setRoast] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isApiKeyValid, setIsApiKeyValid] = useState(false);
+  const [sassLevel, setSassLevel] = useState(5); // default 5/10
+
 
   const testApiKey = async () => {
     if (!apiKey.trim()) {
@@ -104,23 +106,26 @@ export const GeminiRoast = ({ imageData, selectedFilter }: GeminiRoastProps) => 
       <div className="flex items-center gap-2 mb-2">
         <Sparkles className="w-5 h-5 text-secondary" />
         <h3 className="text-xl font-creepy text-secondary">
-          AI Costume Roast (Optional)
+          Generate a Caption with AI
         </h3>
       </div>
 
       <div className="space-y-3">
         <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              type="password"
-              placeholder="Enter Gemini API Key"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              disabled={isLoading}
-              className="pl-10"
-            />
-          </div>
+        <div className="relative flex-1">
+        <label className="sr-only">Select the level of sass</label>
+        <input
+          type="range"
+          min={1}
+          max={10}
+          value={sassLevel}
+          onChange={(e) => setSassLevel(Number(e.target.value))}
+          disabled={isLoading}
+          className="w-full h-10 rounded-lg bg-secondary/10 accent-secondary"
+        />
+      </div>
+
+          
           <Button
             onClick={testApiKey}
             disabled={isLoading || !apiKey.trim()}
@@ -159,14 +164,14 @@ export const GeminiRoast = ({ imageData, selectedFilter }: GeminiRoastProps) => 
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Get your free API key at{" "}
+        {/* Get your free API key at{" "} */}
         <a
           href="https://ai.google.dev"
           target="_blank"
           rel="noopener noreferrer"
           className="text-secondary hover:underline"
         >
-          ai.google.dev
+          {/* ai.google.dev */}
         </a>
       </p>
     </Card>
