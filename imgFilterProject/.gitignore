@@ -16,6 +16,9 @@ dist-ssr
 .env
 .env.*
 
+# Uploads directory
+uploads/
+
 # Logs
 logs
 *.log
