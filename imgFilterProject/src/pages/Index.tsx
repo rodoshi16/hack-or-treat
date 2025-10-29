@@ -195,9 +195,11 @@ const Index = () => {
             <TabsContent value="gif">
               {/* Upload Section */}
               {!uploadedImage && (
-                <Card className="p-8 border-2 border-primary/20 hover:border-primary/40 transition-all spooky-hover">
-                  <ImageUpload onImageUpload={handleImageUpload} />
-                </Card>
+                <div className="flex justify-center">
+                  <Card className="p-4 border-2 border-primary/20 hover:border-primary/40 transition-all spooky-hover w-full max-w-md">
+                    <ImageUpload onImageUpload={handleImageUpload} />
+                  </Card>
+                </div>
               )}
 
               {/* Processing Section */}
