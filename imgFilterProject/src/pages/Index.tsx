@@ -6,7 +6,7 @@ import { ImageUpload } from "@/components/ImageUpload";
 import { FilterSelector } from "@/components/FilterSelector";
 import { GeminiRoast } from "@/components/GeminiRoast";
 import { GifPreview } from "@/components/GifPreview";
-import { StoryMaker } from "@/components/StoryMaker";
+import { InstagramStoryMaker } from "@/components/InstagramStoryMaker";
 import { useImageProcessor } from "@/hooks/useImageProcessor";
 import { useGifGenerator } from "@/hooks/useGifGenerator";
 import { toast } from "sonner";
@@ -137,7 +137,7 @@ const Index = () => {
         {/* Main Content */}
         <div className="grid gap-8">
           {/* Story Maker Section */}
-          <StoryMaker />
+          <InstagramStoryMaker />
           {/* Upload Section */}
           {!uploadedImage && (
             <Card className="p-8 border-2 border-primary/20 hover:border-primary/40 transition-all spooky-hover">
