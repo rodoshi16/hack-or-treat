@@ -126,3 +126,19 @@ All colors MUST be HSL.
     animation: float 3s ease-in-out infinite;
   }
 }
+
+/* Hide common Lovable watermarks or badges */
+.lovable-watermark,
+[data-testid*="lovable"],
+[class*="lovable"],
+[id*="lovable"],
+a[href*="lovable"] {
+  display: none !important;
+}
+
+/* Generic watermark fallback */
+[class*="watermark"],
+[id*="watermark"],
+[data-testid*="watermark"] {
+  display: none !important;
+}
