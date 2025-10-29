@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { ImageUpload } from "@/components/ImageUpload";
 import { FilterSelector } from "@/components/FilterSelector";
 import { GeminiRoast } from "@/components/GeminiRoast";
+import { CaptionGenerator } from "@/components/CaptionGenerator";
 import { GifPreview } from "@/components/GifPreview";
 import { useImageProcessor } from "@/hooks/useImageProcessor";
 import { useGifGenerator } from "@/hooks/useGifGenerator";
@@ -168,6 +169,11 @@ const Index = () => {
                     onFilterSelect={handleFilterSelect}
                   />
                 </Card>
+
+                <CaptionGenerator
+                  imageData={uploadedImage}
+                  selectedFilter={selectedFilter}
+                />
 
                 <GeminiRoast
                   imageData={uploadedImage}
