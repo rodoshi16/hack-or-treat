@@ -118,6 +118,31 @@ const Index = () => {
     setGeneratedGif(null);
   };
 
+  const handleSmoothScrollToFeature = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const target = document.getElementById("feature");
+    if (!target) return;
+
+    const headerOffset = 80; // account for top spacing
+    const start = window.scrollY || window.pageYOffset;
+    const end = target.getBoundingClientRect().top + start - headerOffset;
+    const distance = end - start;
+    const duration = 1200; // slower scroll (ms)
+    const startTime = performance.now();
+
+    const easeInOutQuad = (t: number) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = easeInOutQuad(progress);
+      window.scrollTo(0, start + distance * eased);
+      if (elapsed < duration) requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+  };
+
   return (
     <div className="min-h-screen py-8 px-4">
       <div className="container mx-auto max-w-6xl">
@@ -145,14 +170,16 @@ const Index = () => {
             Upload your costume, apply spooky filters, and create shareable GIFs with AI-powered roasts!
           </p>
           <div className="mt-8">
-            <a href="#generate" className="inline-flex items-center bg-primary text-primary-foreground px-6 py-3 rounded-md spooky-hover">
+            <a href="#feature" onClick={handleSmoothScrollToFeature} className="inline-flex items-center bg-primary text-primary-foreground px-6 py-3 rounded-md spooky-hover">
               Get Started
             </a>
           </div>
         </header>
 
         {/* Main Content */}
-        <div id="generate" className="grid gap-8 scroll-mt-24">
+        <div id="feature" className="grid gap-8 scroll-mt-24">
+          {/* Legacy anchor for backward compatibility */}
+          <div id="generate" className="sr-only" aria-hidden="true" />
           <Tabs defaultValue="gif" className="w-full">
             <div className="flex justify-center">
               <TabsList>
