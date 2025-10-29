@@ -12,7 +12,6 @@ dotenv.config({ path: envPath });
 
 import express from "express";
 import cors from "cors";
-import fs from "fs";
 import { initDb, pool } from "./pg";
 import { setupRoutes } from "./routes";
 

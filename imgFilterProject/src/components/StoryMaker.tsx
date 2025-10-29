@@ -9,7 +9,7 @@ import { toast } from "sonner";
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 export function StoryMaker() {
-  const [files, setFiles] = useState<FileList | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [theme, setTheme] = useState("");
   const [statusUrl, setStatusUrl] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -17,7 +17,15 @@ export function StoryMaker() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFiles(e.target.files);
+    const selected = Array.from(e.target.files || []);
+    if (selected.length === 0) {
+      setFiles([]);
+      return;
+    }
+    if (selected.length > 10) {
+      toast.warning("You can upload at most 10 files. Taking the first 10.");
+    }
+    setFiles(selected.slice(0, 10));
   };
 
   const handleCreateStory = async () => {
@@ -35,9 +43,7 @@ export function StoryMaker() {
       // Step 1: Upload files
       toast.info("Uploading files...");
       const formData = new FormData();
-      Array.from(files).forEach((file) => {
-        formData.append("files", file);
-      });
+      files.forEach((file) => formData.append("files", file));
 
       const uploadResponse = await fetch(`${API_BASE}/api/uploads`, {
         method: "POST",
@@ -162,7 +168,7 @@ export function StoryMaker() {
             disabled={isProcessing}
             className="mt-2"
           />
-          {files && (
+          {files && files.length > 0 && (
             <p className="text-sm text-muted-foreground mt-2">
               {files.length} file(s) selected
             </p>

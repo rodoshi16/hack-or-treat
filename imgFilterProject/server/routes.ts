@@ -3,10 +3,16 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { pool } from "./pg";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Ensure environment variables are loaded when this module is evaluated
+const envPath = path.resolve(__dirname, "..", ".env");
+dotenv.config({ path: envPath });
 
 // Multer configuration - store files in memory, then save to disk
 const upload = multer({
@@ -27,12 +33,12 @@ function saveBufferToUploads(buf: Buffer, originalName: string): string {
   return `/uploads/${fileName}`;
 }
 
-// Helper to generate narration script with Gemini
+// Helper to generate narration script with Gemini (SDK)
 async function generateNarrationScript(assetUrls: string[], theme?: string): Promise<string> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    throw new Error("GEMINI_API_KEY not set in environment variables");
-  }
+  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GEMINI_API_KEY;
+  if (!apiKey) throw new Error("GEMINI_API_KEY not set in environment variables");
+
+  const modelName = process.env.GEMINI_MODEL || "gemini-pro"; // text-only model
 
   const prompt = [
     "Write a concise, cinematic narration (around 100-150 words) for a short video story.",
@@ -50,29 +56,12 @@ async function generateNarrationScript(assetUrls: string[], theme?: string): Pro
   ].join("\n");
 
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const script = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-    
-    if (!script) {
-      throw new Error("No script generated from Gemini");
-    }
-
-    return script;
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: modelName });
+    const result = await model.generateContent(prompt);
+    const text = result.response?.text?.();
+    if (!text) throw new Error("Gemini API returned no text");
+    return text.trim();
   } catch (error) {
     console.error("Error generating narration:", error);
     throw error;
@@ -84,7 +73,7 @@ async function submitJson2VideoJob(
   assetUrls: string[],
   narration: string
 ): Promise<{ id: string; statusUrl: string }> {
-  const apiKey = process.env.JSON2VIDEO_API_KEY;
+  const apiKey = process.env.JSON2VIDEO_API_KEY || process.env.JSON2Video_API_Key;
   if (!apiKey) {
     throw new Error("JSON2VIDEO_API_KEY not set in environment variables");
   }
@@ -202,7 +191,7 @@ export function setupRoutes(app: Express) {
   });
 
   // Upload endpoint - saves files and returns public URLs
-  app.post("/api/uploads", upload.array("files", 20), async (req: Request, res: Response) => {
+  app.post("/api/uploads", upload.array("files", 10), async (req: Request, res: Response) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const files = (req as any).files as Array<{
