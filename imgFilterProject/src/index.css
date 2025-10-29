@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 16 20% 10%;
+    --foreground: 0 0% 98%;
+
+    --card: 16 20% 12%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 16 20% 12%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 14 100% 57%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 277 49% 35%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 16 15% 25%;
+    --muted-foreground: 0 0% 70%;
+
+    --accent: 120 100% 47%;
+    --accent-foreground: 16 20% 10%;
+
+    --destructive: 0 72% 27%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 16 15% 20%;
+    --input: 16 15% 20%;
+    --ring: 14 100% 57%;
+
+    --radius: 0.75rem;
+    
+    --blood-red: 0 100% 27%;
+    --halloween-orange: 14 100% 60%;
+    --spooky-purple: 277 49% 37%;
+    --toxic-green: 120 100% 55%;
+    --midnight: 225 21% 14%;
+    
+    --gradient-spooky: linear-gradient(135deg, hsl(var(--blood-red)), hsl(var(--spooky-purple)));
+    --gradient-halloween: linear-gradient(135deg, hsl(var(--halloween-orange)), hsl(var(--blood-red)));
+    
+    --shadow-glow: 0 0 40px hsl(var(--halloween-orange) / 0.4);
+    --shadow-spooky: 0 10px 40px -10px hsl(var(--blood-red) / 0.6);
+    
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    background: linear-gradient(135deg, hsl(var(--midnight)) 0%, hsl(var(--blood-red) / 0.3) 100%);
+    min-height: 100vh;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Creepster', cursive;
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  .spooky-hover {
+    transition: var(--transition-smooth);
+  }
+  
+  .spooky-hover:hover {
+    transform: scale(1.05) rotate(-2deg);
+    box-shadow: var(--shadow-glow);
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+}
