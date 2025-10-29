@@ -51,6 +51,11 @@ export const useFacialExpression = () => {
       console.log('📷 [Hook] Starting camera...');
       console.log('📷 [Hook] videoRef.current:', videoRef.current);
       
+      // Check if getUserMedia is available
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Camera access not supported in this browser');
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { 
           width: 320, 
@@ -110,9 +115,26 @@ export const useFacialExpression = () => {
       }
       
       console.log('✅ [Hook] Camera started successfully');
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ [Hook] Error accessing camera:', error);
-      setError('Failed to access camera. Please allow camera permissions.');
+      
+      let errorMessage = 'Failed to access camera. ';
+      
+      if (error.name === 'NotAllowedError') {
+        errorMessage += 'Please allow camera permissions in your browser and try again.';
+      } else if (error.name === 'NotFoundError') {
+        errorMessage += 'No camera device found. Please connect a camera and try again.';
+      } else if (error.name === 'NotReadableError') {
+        errorMessage += 'Camera is already in use by another application.';
+      } else if (error.name === 'OverconstrainedError') {
+        errorMessage += 'Camera constraints cannot be satisfied.';
+      } else if (error.name === 'SecurityError') {
+        errorMessage += 'Camera access blocked due to security restrictions.';
+      } else {
+        errorMessage += error.message || 'Unknown camera error occurred.';
+      }
+      
+      setError(errorMessage);
       throw error; // Re-throw so the caller knows it failed
     }
   }, []);

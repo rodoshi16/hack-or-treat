@@ -24,9 +24,11 @@ export async function generateDSAQuestion(): Promise<DSAQuestion> {
       throw new Error("Gemini API key not found");
     }
 
-    const prompt = `Generate a DSA multiple choice question. Topics: arrays, trees, sorting, time complexity. Return ONLY this JSON format:
+    const prompt = `Create a computer science multiple choice question about data structures and algorithms.
+
+Return your response as valid JSON with this exact structure:
 {
-  "question": "What is the time complexity of...",
+  "question": "What is the time complexity of binary search?",
   "options": {
     "A": "O(1)",
     "B": "O(log n)", 
@@ -40,7 +42,9 @@ export async function generateDSAQuestion(): Promise<DSAQuestion> {
     "C": "📏", 
     "D": "💥"
   }
-}`;
+}
+
+Only return the JSON, no other text.`;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
@@ -56,7 +60,7 @@ export async function generateDSAQuestion(): Promise<DSAQuestion> {
               parts: [{ text: prompt }]
             }],
             generationConfig: {
-              maxOutputTokens: 500,
+              maxOutputTokens: 1000,
               temperature: 0.1
             }
           }),
@@ -69,35 +73,85 @@ export async function generateDSAQuestion(): Promise<DSAQuestion> {
       }
 
       const data = await response.json();
+      
+      console.log("🔍 Full API response:", JSON.stringify(data, null, 2));
+      console.log("🔍 Candidates array:", data.candidates);
+      console.log("🔍 First candidate:", data.candidates?.[0]);
+      
+      // Check for API errors or safety issues
+      if (data.candidates?.[0]?.finishReason === "SAFETY") {
+        throw new Error("Content filtered by safety settings");
+      }
+      
+      if (data.candidates?.[0]?.finishReason === "MAX_TOKENS") {
+        throw new Error("Response truncated due to token limit - using fallback");
+      }
+      
+      if (!data.candidates || data.candidates.length === 0) {
+        throw new Error("No candidates in API response");
+      }
+      
       const questionText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
       
       console.log("🔍 Raw response text:", questionText);
+      console.log("🔍 Response text length:", questionText.length);
+      
+      // If response is empty, throw error immediately
+      if (!questionText || questionText.trim().length === 0) {
+        throw new Error("Empty response from API");
+      }
       
       // Extract JSON from the response - try multiple patterns
+      let jsonString = "";
       let jsonMatch = questionText.match(/\{[\s\S]*\}/);
       
-      if (!jsonMatch) {
+      if (jsonMatch) {
+        jsonString = jsonMatch[0];
+      } else {
         // Try to find JSON within code blocks
         jsonMatch = questionText.match(/```json\s*(\{[\s\S]*?\})\s*```/);
         if (jsonMatch) {
-          jsonMatch[0] = jsonMatch[1];
+          jsonString = jsonMatch[1];
         }
       }
       
-      if (!jsonMatch) {
+      if (!jsonString) {
         // Try to find JSON between triple backticks
         jsonMatch = questionText.match(/```\s*(\{[\s\S]*?\})\s*```/);
         if (jsonMatch) {
-          jsonMatch[0] = jsonMatch[1];
+          jsonString = jsonMatch[1];
         }
       }
       
-      if (!jsonMatch) {
+      if (!jsonString) {
+        // Last attempt: try to find any content that starts with { and ends with }
+        const lines = questionText.split('\n');
+        let startIndex = -1;
+        let endIndex = -1;
+        
+        for (let i = 0; i < lines.length; i++) {
+          if (lines[i].trim().startsWith('{') && startIndex === -1) {
+            startIndex = i;
+          }
+          if (lines[i].trim().endsWith('}') && startIndex !== -1) {
+            endIndex = i;
+            break;
+          }
+        }
+        
+        if (startIndex !== -1 && endIndex !== -1) {
+          jsonString = lines.slice(startIndex, endIndex + 1).join('\n');
+        }
+      }
+      
+      if (!jsonString) {
         console.error("❌ No JSON found in response:", questionText);
+        console.error("❌ Response appears to be:", typeof questionText);
         throw new Error("No valid JSON found in response");
       }
 
-      const questionData = JSON.parse(jsonMatch[0]);
+      console.log("🔍 Extracted JSON string:", jsonString);
+      const questionData = JSON.parse(jsonString);
       
       console.log("✅ DSA question generated successfully");
       return questionData;
@@ -110,7 +164,7 @@ export async function generateDSAQuestion(): Promise<DSAQuestion> {
   } catch (error) {
     console.error("❌ Error generating DSA question:", error);
     
-    // Multiple fallback questions for variety
+    // Enhanced fallback questions for variety
     const fallbackQuestions = [
       {
         question: "What is the time complexity of binary search on a sorted array?",
@@ -158,6 +212,38 @@ export async function generateDSAQuestion(): Promise<DSAQuestion> {
           B: "📈",
           C: "📏",
           D: "🌊"
+        }
+      },
+      {
+        question: "Which sorting algorithm has the best average case time complexity?",
+        options: {
+          A: "Bubble Sort",
+          B: "Quick Sort",
+          C: "Selection Sort", 
+          D: "Insertion Sort"
+        },
+        correctAnswer: "B" as const,
+        emoji_mapping: {
+          A: "🫧",
+          B: "⚡",
+          C: "🎯",
+          D: "➡️"
+        }
+      },
+      {
+        question: "What is the space complexity of a recursive function that calls itself n times?",
+        options: {
+          A: "O(1)",
+          B: "O(log n)",
+          C: "O(n)",
+          D: "O(n²)"
+        },
+        correctAnswer: "C" as const,
+        emoji_mapping: {
+          A: "📦",
+          B: "📈",
+          C: "📏",
+          D: "💥"
         }
       }
     ];
