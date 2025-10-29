@@ -61,13 +61,43 @@ const Index = () => {
     }
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!generatedGif) return;
-    const link = document.createElement("a");
-    link.href = generatedGif;
-    link.download = "halloween-costume-flex.gif";
-    link.click();
-    toast.success("Downloading your spooky GIF! 👻");
+    
+    const cleanUrl = generatedGif.replace('#video', '');
+    const isVideo = generatedGif.includes('#video');
+    
+    if (isVideo) {
+      // For videos, detect the actual format from the blob
+      try {
+        const response = await fetch(cleanUrl);
+        const blob = await response.blob();
+        const mimeType = blob.type;
+        
+        let extension = 'mp4';
+        if (mimeType.includes('webm')) {
+          extension = 'webm';
+        } else if (mimeType.includes('mp4')) {
+          extension = 'mp4';
+        }
+        
+        const link = document.createElement("a");
+        link.href = cleanUrl;
+        link.download = `halloween-costume-flex.${extension}`;
+        link.click();
+        toast.success(`Downloading your spooky video! 👻`);
+      } catch (error) {
+        console.error('Download error:', error);
+        toast.error('Failed to download video');
+      }
+    } else {
+      // For actual GIFs
+      const link = document.createElement("a");
+      link.href = cleanUrl;
+      link.download = 'halloween-costume-flex.gif';
+      link.click();
+      toast.success('Downloading your spooky GIF! 👻');
+    }
   };
 
   const handleShare = async () => {
@@ -181,7 +211,7 @@ const Index = () => {
                     size="lg"
                   >
                     <Download className="w-5 h-5 mr-2" />
-                    Download GIF
+                    Download Video
                   </Button>
                   
                   <Button
