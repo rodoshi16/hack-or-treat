@@ -54,7 +54,17 @@ export const useGifGenerator = () => {
           startVideoRecording();
         };
         
-        jumpscareImg.src = "/jumpscare-1.jpeg";
+        // Randomize jumpscare image based on current time
+        const jumpscareImages = [
+          "/jumpscare-1.jpeg",
+          "/jumpscare-2.jpeg", 
+          "/jumpscare-3.jpeg"
+        ];
+        const randomIndex = Math.floor(Date.now() / 1000) % jumpscareImages.length;
+        const selectedJumpscare = jumpscareImages[randomIndex];
+        console.log(`🎲 Selected jumpscare: ${selectedJumpscare}`);
+        
+        jumpscareImg.src = selectedJumpscare;
         
         function startVideoRecording() {
           // Use MediaRecorder to create a video instead of GIF
@@ -103,7 +113,7 @@ export const useGifGenerator = () => {
           const animate = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            if (frame < 60) {
+            if (frame < 90) {
               // Show user image for 2 seconds (60 frames) - already perfect size
               ctx.drawImage(img, 0, 0);
             } else {
