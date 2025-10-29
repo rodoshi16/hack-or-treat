@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Upload, Wand2, Download, Share2, Ghost } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -19,6 +19,12 @@ const Index = () => {
   const { processedImage, applyFilter } = useImageProcessor(uploadedImage);
   const { generateGif } = useGifGenerator();
 
+  useEffect(() => console.log(uploadedImage), [uploadedImage]);
+  useEffect(() => {
+    console.log("generatedGif changed");
+    console.log(generatedGif);
+  }, [generatedGif]);
+
   const handleImageUpload = (imageData: string) => {
     setUploadedImage(imageData);
     setGeneratedGif(null);
@@ -33,14 +39,18 @@ const Index = () => {
   };
 
   const handleGenerateGif = async () => {
-    if (!processedImage) {
-      toast.error("Please upload an image and select a filter first!");
+    // Temporarily comment out filter requirement to isolate GIF generation
+    if (!uploadedImage) {
+      toast.error("Please upload an image first!");
       return;
     }
 
     setIsGenerating(true);
     try {
-      const gif = await generateGif(processedImage, selectedFilter || "vampire");
+      // Use original uploaded image instead of processed image for testing
+      const gif = await generateGif(uploadedImage, selectedFilter || "vampire");
+      console.log("gif is generated");
+      console.log(gif);
       setGeneratedGif(gif);
       toast.success("Your spooky GIF is ready! 🎃");
     } catch (error) {
@@ -113,7 +123,7 @@ const Index = () => {
                 </h2>
                 <div className="relative aspect-square rounded-lg overflow-hidden bg-muted">
                   <img
-                    src={processedImage || uploadedImage}
+                    src={uploadedImage}
                     alt="Costume preview"
                     className="w-full h-full object-cover"
                   />
@@ -136,7 +146,7 @@ const Index = () => {
 
                 <Button
                   onClick={handleGenerateGif}
-                  disabled={!selectedFilter || isGenerating}
+                  disabled={!uploadedImage || isGenerating}
                   className="w-full h-14 text-lg font-bold bg-gradient-to-r from-primary to-secondary hover:opacity-90 spooky-hover"
                   size="lg"
                 >
