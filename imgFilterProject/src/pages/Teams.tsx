@@ -10,24 +10,24 @@ interface Member {
 }
 
 const members: Member[] = [
-  {
-    name: "Kimi An",
-    role: "Hacker & Developer",
-    imageSrc: "/kimi_image.jpeg",
-    linkedin: "https://www.linkedin.com/in/kimi-an/",
-  },
-  {
-    name: "Rodoshi Mondal",
-    role: "Hacker & Developer",
-    imageSrc: "/placeholder.svg",
-    linkedin: "https://www.linkedin.com/in/rodoshi-mondal/",
-  },
-  {
-    name: "Thanh Nguyen",
-    role: "Hacker & Developer",
-    imageSrc: "/placeholder.svg",
-    linkedin: "https://www.linkedin.com/in/thanh-nguyen-ho-tien-54b835271/",
-  },
+    {
+        name: "Rodoshi Mondal",
+        role: "Hacker & Developer",
+        imageSrc: "/Rodoshi_image.jpeg",
+        linkedin: "https://www.linkedin.com/in/rodoshi-mondal/",
+    },
+    {
+        name: "Kimi An",
+        role: "Hacker & Developer",
+        imageSrc: "/kimi_image.jpeg",
+        linkedin: "https://www.linkedin.com/in/kimi-an/",
+    },
+    {
+        name: "Thanh Nguyen",
+        role: "Hacker & Developer",
+        imageSrc: "/Thanh.png",
+        linkedin: "https://www.linkedin.com/in/thanh-nguyen-ho-tien-54b835271/",
+    },
 ];
 
 const Teams = () => {
