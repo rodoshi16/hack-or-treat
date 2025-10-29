@@ -153,7 +153,7 @@ const Index = () => {
             <span className="font-creepy text-2xl text-primary">Hack-or-Treat</span>
           </div>
           <div className="flex items-center gap-4 text-sm">
-            <a href="#teams" className="text-muted-foreground hover:text-primary transition-colors">Teams</a>
+            <a href="/teams" className="text-muted-foreground hover:text-primary transition-colors">Teams</a>
             <a href="mailto:contact@hackortreat.dev" className="text-muted-foreground hover:text-primary transition-colors">Contact</a>
           </div>
         </nav>
@@ -307,7 +307,6 @@ const Index = () => {
           </p>
         </footer>
         {/* Optional anchors for nav links */}
-        <div id="teams" className="sr-only" aria-hidden="true">Teams</div>
         <div id="contact" className="sr-only" aria-hidden="true">Contact</div>
       </div>
     </div>
