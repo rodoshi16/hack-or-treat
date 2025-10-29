@@ -54,11 +54,11 @@ export const ImageUpload = ({ onImageUpload }: ImageUploadProps) => {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       className={`
-        relative border-4 border-dashed rounded-xl p-12 text-center
+        relative border-2 border-dashed rounded-lg p-6 text-center
         transition-all duration-300 cursor-pointer
         ${isDragging 
-          ? "border-primary bg-primary/10 scale-105" 
-          : "border-muted hover:border-primary/50 hover:bg-muted/50"
+          ? "border-primary bg-primary/10 scale-[1.02]" 
+          : "border-muted hover:border-primary/40 hover:bg-muted/50"
         }
       `}
     >
@@ -71,29 +71,29 @@ export const ImageUpload = ({ onImageUpload }: ImageUploadProps) => {
       />
       
       <label htmlFor="file-upload" className="cursor-pointer">
-        <div className="space-y-6">
-          <Ghost className="w-24 h-24 mx-auto text-primary animate-float" />
+        <div className="space-y-4">
+          <Ghost className="w-16 h-16 mx-auto text-primary animate-float" />
           
           <div>
-            <h3 className="text-2xl font-creepy text-primary mb-2">
+            <h3 className="text-xl font-creepy text-primary mb-1">
               Upload Your Costume
             </h3>
-            <p className="text-muted-foreground mb-4">
+            <p className="text-sm text-muted-foreground mb-3">
               Drag & drop your photo here, or click to browse
             </p>
           </div>
 
           <Button
             type="button"
-            size="lg"
+            size="sm"
             className="spooky-hover"
             onClick={() => document.getElementById("file-upload")?.click()}
           >
-            <Upload className="w-5 h-5 mr-2" />
+            <Upload className="w-4 h-4 mr-2" />
             Choose Photo
           </Button>
 
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             Supports JPG, PNG, WEBP, and more
           </p>
         </div>
