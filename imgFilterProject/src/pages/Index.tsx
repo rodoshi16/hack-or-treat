@@ -121,22 +121,38 @@ const Index = () => {
   return (
     <div className="min-h-screen py-8 px-4">
       <div className="container mx-auto max-w-6xl">
-        {/* Header */}
-        <header className="text-center mb-12 animate-fade-in">
-          <div className="flex items-center justify-center gap-4 mb-4">
+        {/* Top Navigation */}
+        <nav className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <Ghost className="w-6 h-6 text-primary" />
+            <span className="font-creepy text-2xl text-primary">Hack-or-Treat</span>
+          </div>
+          <div className="flex items-center gap-4 text-sm">
+            <a href="#teams" className="text-muted-foreground hover:text-primary transition-colors">Teams</a>
+            <a href="mailto:contact@hackortreat.dev" className="text-muted-foreground hover:text-primary transition-colors">Contact</a>
+          </div>
+        </nav>
+        {/* Hero */}
+        <header className="min-h-[80vh] md:min-h-[90vh] flex flex-col items-center justify-center text-center animate-fade-in">
+          <div className="flex items-center justify-center gap-4 mb-6">
             <Ghost className="w-12 h-12 text-primary animate-float" />
             <h1 className="text-5xl md:text-7xl font-creepy text-primary text-glow">
               Halloween Costume Flex
             </h1>
             <Ghost className="w-12 h-12 text-primary animate-float" style={{ animationDelay: "1s" }} />
           </div>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Upload your costume, apply spooky filters, and create shareable GIFs with AI-powered roasts!
           </p>
+          <div className="mt-8">
+            <a href="#generate" className="inline-flex items-center bg-primary text-primary-foreground px-6 py-3 rounded-md spooky-hover">
+              Get Started
+            </a>
+          </div>
         </header>
 
         {/* Main Content */}
-        <div className="grid gap-8">
+        <div id="generate" className="grid gap-8 scroll-mt-24">
           <Tabs defaultValue="gif" className="w-full">
             <div className="flex justify-center">
               <TabsList>
@@ -261,6 +277,9 @@ const Index = () => {
             Made with 🎃 for Halloween • All processing happens in your browser
           </p>
         </footer>
+        {/* Optional anchors for nav links */}
+        <div id="teams" className="sr-only" aria-hidden="true">Teams</div>
+        <div id="contact" className="sr-only" aria-hidden="true">Contact</div>
       </div>
     </div>
   );
