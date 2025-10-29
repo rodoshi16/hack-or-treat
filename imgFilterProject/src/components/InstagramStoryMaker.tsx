@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2, ImageIcon, Wand2, Download, ArrowLeft, ArrowRight, Video, Play } from "lucide-react";
 import { toast } from "sonner";
 import { generateHalloweenRoast } from "@/lib/gemini";
+import { DSAQuizGatekeeper } from "@/components/DSAQuizGatekeeper";
 
 interface ProcessedStory {
   originalImage: string;
@@ -103,7 +104,7 @@ export function InstagramStoryMaker() {
       };
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${apiKey}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -166,7 +167,7 @@ export function InstagramStoryMaker() {
       const imageBase64 = imageData.split(',')[1];
       
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${apiKey}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -616,108 +617,112 @@ export function InstagramStoryMaker() {
 
       {/* Story Preview */}
       {processedStories.length > 0 && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Your Horror Story 📚</h3>
-            <div className="flex gap-2">
+        <DSAQuizGatekeeper contentType="Horror Story">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Your Horror Story 📚</h3>
+              <div className="flex gap-2">
+                <Button
+                  onClick={downloadCurrentStory}
+                  variant="outline"
+                  size="sm"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download This
+                </Button>
+                <Button
+                  onClick={downloadAllStories}
+                  variant="outline"
+                  size="sm"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download All
+                </Button>
+              </div>
+            </div>
+
+            {/* Story Navigation */}
+            <div className="flex items-center gap-4">
               <Button
-                onClick={downloadCurrentStory}
+                onClick={() => setCurrentStoryIndex(Math.max(0, currentStoryIndex - 1))}
+                disabled={currentStoryIndex === 0}
                 variant="outline"
                 size="sm"
               >
-                <Download className="w-4 h-4 mr-2" />
-                Download This
+                <ArrowLeft className="w-4 h-4" />
               </Button>
+              
+              <span className="text-sm text-muted-foreground">
+                {currentStoryIndex + 1} / {processedStories.length}
+              </span>
+              
               <Button
-                onClick={downloadAllStories}
+                onClick={() => setCurrentStoryIndex(Math.min(processedStories.length - 1, currentStoryIndex + 1))}
+                disabled={currentStoryIndex === processedStories.length - 1}
                 variant="outline"
                 size="sm"
               >
-                <Download className="w-4 h-4 mr-2" />
-                Download All
+                <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
-          </div>
 
-          {/* Story Navigation */}
-          <div className="flex items-center gap-4">
-            <Button
-              onClick={() => setCurrentStoryIndex(Math.max(0, currentStoryIndex - 1))}
-              disabled={currentStoryIndex === 0}
-              variant="outline"
-              size="sm"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            
-            <span className="text-sm text-muted-foreground">
-              {currentStoryIndex + 1} / {processedStories.length}
-            </span>
-            
-            <Button
-              onClick={() => setCurrentStoryIndex(Math.min(processedStories.length - 1, currentStoryIndex + 1))}
-              disabled={currentStoryIndex === processedStories.length - 1}
-              variant="outline"
-              size="sm"
-            >
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </div>
+            {/* Current Story Display */}
+            <div className="flex justify-center">
+              <div className="relative bg-black rounded-lg overflow-hidden" style={{ width: '300px', height: '533px' }}>
+                <img
+                  src={processedStories[currentStoryIndex].processedImage}
+                  alt={`Story ${currentStoryIndex + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
 
-          {/* Current Story Display */}
-          <div className="flex justify-center">
-            <div className="relative bg-black rounded-lg overflow-hidden" style={{ width: '300px', height: '533px' }}>
-              <img
-                src={processedStories[currentStoryIndex].processedImage}
-                alt={`Story ${currentStoryIndex + 1}`}
-                className="w-full h-full object-cover"
-              />
+            <div className="text-center">
+              <div className="bg-muted/50 p-3 rounded-lg border border-primary/20">
+                <p className="text-sm font-medium text-primary mb-1">Chapter {currentStoryIndex + 1}:</p>
+                <p className="text-sm leading-relaxed">"{processedStories[currentStoryIndex].caption}"</p>
+              </div>
             </div>
           </div>
-
-          <div className="text-center">
-            <div className="bg-muted/50 p-3 rounded-lg border border-primary/20">
-              <p className="text-sm font-medium text-primary mb-1">Chapter {currentStoryIndex + 1}:</p>
-              <p className="text-sm leading-relaxed">"{processedStories[currentStoryIndex].caption}"</p>
-            </div>
-          </div>
-        </div>
+        </DSAQuizGatekeeper>
       )}
 
       {/* Reel Preview */}
       {generatedReel && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Your Horror Reel 🎬</h3>
-            <Button
-              onClick={downloadReel}
-              variant="outline"
-              size="sm"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Download Reel
-            </Button>
-          </div>
+        <DSAQuizGatekeeper contentType="Horror Reel">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Your Horror Reel 🎬</h3>
+              <Button
+                onClick={downloadReel}
+                variant="outline"
+                size="sm"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Download Reel
+              </Button>
+            </div>
 
-          <div className="flex justify-center">
-            <div className="relative bg-black rounded-lg overflow-hidden" style={{ width: '300px', height: '533px' }}>
-              <video
-                src={generatedReel}
-                controls
-                autoPlay
-                loop
-                muted
-                className="w-full h-full object-cover"
-              />
+            <div className="flex justify-center">
+              <div className="relative bg-black rounded-lg overflow-hidden" style={{ width: '300px', height: '533px' }}>
+                <video
+                  src={generatedReel}
+                  controls
+                  autoPlay
+                  loop
+                  muted
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground">
+                Duration: {processedStories.length * imageDuration} seconds • {processedStories.length} slides
+              </p>
             </div>
           </div>
-
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">
-              Duration: {processedStories.length * imageDuration} seconds • {processedStories.length} slides
-            </p>
-          </div>
-        </div>
+        </DSAQuizGatekeeper>
       )}
 
       {/* Hidden canvas for image processing */}
