@@ -6,7 +6,7 @@ import { ImageUpload } from "@/components/ImageUpload";
 import { FilterSelector } from "@/components/FilterSelector";
 import { GeminiRoast } from "@/components/GeminiRoast";
 import { GifPreview } from "@/components/GifPreview";
-import { StoryMaker } from "@/components/StoryMaker";
+import { InstagramStoryMaker } from "@/components/InstagramStoryMaker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useImageProcessor } from "@/hooks/useImageProcessor";
 import { useGifGenerator } from "@/hooks/useGifGenerator";
@@ -189,7 +189,7 @@ const Index = () => {
             </div>
 
             <TabsContent value="story">
-              <StoryMaker />
+              <InstagramStoryMaker />
             </TabsContent>
 
             <TabsContent value="gif">
