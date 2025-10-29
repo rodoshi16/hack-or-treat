@@ -15,7 +15,9 @@ export const GeminiRoast = ({ imageData, selectedFilter }: GeminiRoastProps) => 
   const [roast, setRoast] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isApiKeyValid, setIsApiKeyValid] = useState(false);
-  const [sassLevel, setSassLevel] = useState(5); // default 5/10
+  const [sassLevel, setSassLevel] = useState(5); 
+  const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
 
 
   const testApiKey = async () => {
@@ -28,7 +30,7 @@ export const GeminiRoast = ({ imageData, selectedFilter }: GeminiRoastProps) => 
     try {
       // Simple test prompt to validate API key
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -53,13 +55,7 @@ export const GeminiRoast = ({ imageData, selectedFilter }: GeminiRoastProps) => 
     }
   };
 
-  const generateRoast = async () => {
-    if (!isApiKeyValid || !selectedFilter) {
-      toast.error("Please validate your API key and select a filter first");
-      return;
-    }
-
-    setIsLoading(true);
+  const generateCaption = async () => {
     try {
       const filterThemes: Record<string, string> = {
         vampire: "bloodsucking fashion disaster",
@@ -75,14 +71,14 @@ export const GeminiRoast = ({ imageData, selectedFilter }: GeminiRoastProps) => 
       const theme = filterThemes[selectedFilter] || "questionable costume choice";
       
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             contents: [{
               parts: [{
-                text: `Generate a witty, playful Halloween costume roast (2-3 sentences max) about this ${theme}. Make it funny but not mean-spirited. Include Halloween emojis.`
+                text: `Generate a witty, playful Halloween caption for this costume. Theme: ${selectedFilter}. Sass level: ${sassLevel}/10. Make it funny but not mean-spirited. Include Halloween emojis.`
               }]
             }],
           }),
@@ -146,20 +142,32 @@ export const GeminiRoast = ({ imageData, selectedFilter }: GeminiRoastProps) => 
           <span>10</span>
         </div>
       </div>
-          <Button
-            onClick={testApiKey}
-            disabled={isLoading || !apiKey.trim()}
-            variant="outline"
-          >
-            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Test"}
-          </Button>
+      <Button
+      onClick={generateCaption}
+      disabled={isLoading}
+      className="w-full spooky-hover"
+      variant="secondary"
+    >
+      {isLoading ? (
+        <>
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          Summoning AI...
+        </>
+      ) : (
+        <>
+          <Sparkles className="w-4 h-4 mr-2" />
+          Generate Caption
+        </>
+      )}
+    </Button>
+
         </div>
 
         {isApiKeyValid && (
           <Button
-            onClick={generateRoast}
+            onClick={generateCaption}
             disabled={isLoading || !selectedFilter}
-            className="w-full spooky-hover"
+            className="spooky-hover px-4 py-2 text-sm"
             variant="secondary"
           >
             {isLoading ? (
