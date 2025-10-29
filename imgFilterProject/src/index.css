@@ -54,6 +54,10 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
+    /* Flashlight glow colors (HSL) */
+    --glow-primary: 0 0% 100%;
+    --glow-secondary: 0 0% 90%;
+
     --sidebar-background: 0 0% 98%;
 
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -80,7 +84,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground font-sans;
-    background: linear-gradient(135deg, hsl(var(--midnight)) 0%, hsl(var(--blood-red) / 0.3) 100%);
+    background: #000;
     min-height: 100vh;
   }
   
@@ -125,20 +129,4 @@ All colors MUST be HSL.
   .animate-float {
     animation: float 3s ease-in-out infinite;
   }
-}
-
-/* Hide common Lovable watermarks or badges */
-.lovable-watermark,
-[data-testid*="lovable"],
-[class*="lovable"],
-[id*="lovable"],
-a[href*="lovable"] {
-  display: none !important;
-}
-
-/* Generic watermark fallback */
-[class*="watermark"],
-[id*="watermark"],
-[data-testid*="watermark"] {
-  display: none !important;
 }
